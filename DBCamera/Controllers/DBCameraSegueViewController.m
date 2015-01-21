@@ -13,7 +13,6 @@
 #import "DBCameraFilterCell.h"
 #import "DBCameraLoadingView.h"
 #import "UIImage+TintColor.h"
-#import "GrayscaleContrastFilter.h"
 
 #import <GPUImage/GPUImage.h>
 
@@ -32,9 +31,6 @@ static const CGSize kFilterCellSize = { 75, 90 };
     DBCameraCropView *_cropView;
     
     NSArray *_cropArray, *_filtersList;
-    GPUImageVignetteFilter *vignetteFilter;
-    GPUImageFilterGroup *vignetteFilterGroup;
-    GPUImageToneCurveFilter *vignetteToneCurveFilter;
     NSDictionary *_filterMapping;
     CGRect _pFrame, _lFrame;
 }
@@ -56,21 +52,12 @@ static const CGSize kFilterCellSize = { 75, 90 };
     self = [super init];
     if (self) {
         // Custom initialization
-        
-        [self initVignetteFilter];
-        
         _cropArray = @[ @320, @213, @240, @192, @180 ];
-        _filtersList = @[ @"normal", @"1977", @"amaro", @"grey", @"hudson", @"mayfair", @"nashville", @"valencia", @"contrastgrey", @"vignette" ];
-        _filterMapping = @{ @0:[[GPUImageFilter alloc] init],
-                            @1:[[GPUImageToneCurveFilter alloc] initWithACV:@"1977"],
-                            @2:[[GPUImageToneCurveFilter alloc] initWithACV:@"amaro"],
-                            @3:[[GPUImageGrayscaleFilter alloc] init],
-                            @4:[[GPUImageToneCurveFilter alloc] initWithACV:@"Hudson"],
-                            @5:[[GPUImageToneCurveFilter alloc] initWithACV:@"mayfair"],
-                            @6:[[GPUImageToneCurveFilter alloc] initWithACV:@"Nashville"],
-                            @7:[[GPUImageToneCurveFilter alloc] initWithACV:@"Valencia"],
-                            @8:[[GrayscaleContrastFilter alloc] init],
-                            @9:vignetteFilterGroup};
+        _filtersList = @[ @"normal", @"1977", @"amaro", @"grey", @"hudson", @"mayfair", @"nashville", @"valencia" ];
+        _filterMapping = @{ @0:[[GPUImageFilter alloc] init], @1:[[GPUImageToneCurveFilter alloc] initWithACV:@"1977"],
+                            @2:[[GPUImageToneCurveFilter alloc] initWithACV:@"amaro"], @3:[[GPUImageGrayscaleFilter alloc] init],
+                            @4:[[GPUImageToneCurveFilter alloc] initWithACV:@"Hudson"], @5:[[GPUImageToneCurveFilter alloc] initWithACV:@"mayfair"],
+                            @6:[[GPUImageToneCurveFilter alloc] initWithACV:@"Nashville"], @7:[[GPUImageToneCurveFilter alloc] initWithACV:@"Valencia"] };
         
         _selectedFilterIndex = 0;
         
@@ -82,19 +69,6 @@ static const CGSize kFilterCellSize = { 75, 90 };
         [self createInterface];
     }
     return self;
-}
-
-- (void)initVignetteFilter {
-    vignetteFilter = [[GPUImageVignetteFilter alloc] init];
-    vignetteToneCurveFilter = [[GPUImageToneCurveFilter alloc] initWithACV:@"Vignette"];
-    vignetteFilterGroup = [[GPUImageFilterGroup alloc] init];
-    
-    [vignetteFilterGroup addFilter:vignetteToneCurveFilter];
-    [vignetteFilterGroup addFilter:vignetteFilter];
-    
-    [vignetteToneCurveFilter addTarget:vignetteFilter];
-    [vignetteFilterGroup setInitialFilters:[NSArray arrayWithObject:vignetteToneCurveFilter]];
-    [vignetteFilterGroup setTerminalFilter:vignetteFilter];
 }
 
 - (void)viewDidLoad
@@ -156,8 +130,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
 
 - (void) createInterface
 {
-    CGFloat viewHeight = CGRectGetHeight([[UIScreen mainScreen] bounds]) - 64 - 40;
-    _cropView = [[DBCameraCropView alloc] initWithFrame:(CGRect){ 0, 64, [[UIScreen mainScreen] bounds].size.width, viewHeight }];
+    CGFloat viewHeight = CGRectGetHeight([[UIScreen mainScreen] bounds]) - 44 - 40;
+    _cropView = [[DBCameraCropView alloc] initWithFrame:(CGRect){ 0, 44, [[UIScreen mainScreen] bounds].size.width, viewHeight }];
     [_cropView setHidden:YES];
     
     [self setFrameView:_cropView];
@@ -238,7 +212,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
 - (UIView *) navigationBar
 {
     if ( !_navigationBar ) {
-        _navigationBar = [[UIView alloc] initWithFrame:(CGRect){ 0, 0, [[UIScreen mainScreen] bounds].size.width, 64 }];
+        _navigationBar = [[UIView alloc] initWithFrame:(CGRect){ 0, 0, [[UIScreen mainScreen] bounds].size.width, 44 }];
         [_navigationBar setBackgroundColor:[UIColor blackColor]];
         [_navigationBar setUserInteractionEnabled:YES];
         [_navigationBar addSubview:self.useButton];
@@ -277,7 +251,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
         [_useButton setTitle:[DBCameraLocalizedStrings(@"button.use") uppercaseString] forState:UIControlStateNormal];
         [_useButton.titleLabel sizeToFit];
         [_useButton sizeToFit];
-        [_useButton setFrame:(CGRect){ CGRectGetWidth(self.view.frame) - (CGRectGetWidth(_useButton.frame) + buttonMargin), 0, CGRectGetWidth(_useButton.frame) + buttonMargin, 60 }];
+        [_useButton setFrame:(CGRect){ CGRectGetWidth(self.view.frame) - (CGRectGetWidth(_useButton.frame) + buttonMargin), 0, CGRectGetWidth(_useButton.frame) + buttonMargin, 44 }];
         [_useButton addTarget:self action:@selector(saveImage) forControlEvents:UIControlEventTouchUpInside];
     }
     
@@ -291,7 +265,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
         [_retakeButton setTitle:[DBCameraLocalizedStrings(@"button.retake") uppercaseString] forState:UIControlStateNormal];
         [_retakeButton.titleLabel sizeToFit];
         [_retakeButton sizeToFit];
-        [_retakeButton setFrame:(CGRect){ 0, 0, CGRectGetWidth(_retakeButton.frame) + buttonMargin, 60 }];
+        [_retakeButton setFrame:(CGRect){ 0, 0, CGRectGetWidth(_retakeButton.frame) + buttonMargin, 44 }];
         [_retakeButton addTarget:self action:@selector(retakeImage) forControlEvents:UIControlEventTouchUpInside];
     }
     
@@ -337,7 +311,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DBCameraFilterCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kFilterCellIdentifier forIndexPath:indexPath];
-    [cell.imageView setImage:[_filterMapping[@(indexPath.row)] imageByFilteringImage:self.previewImage]];
+    [cell.imageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@Filter", _filtersList[indexPath.row]]]];
     [cell.label setText:[_filtersList[indexPath.row] uppercaseString]];
     [cell.imageView.layer setBorderWidth:(self.selectedFilterIndex.row == indexPath.row) ? 1.0 : 0.0];
     

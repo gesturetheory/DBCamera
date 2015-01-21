@@ -11,7 +11,7 @@
 #import "DBCameraMacros.h"
 #import "DBCameraView.h"
 
-@interface DBCameraContainerViewController () <DBCameraContainerDelegate> {
+@interface DBCameraContainerViewController () <DBCameraContainerDelegate, DBCameraViewDelegate> {
     CameraSettingsBlock _settingsBlock;
     BOOL _wasStatusBarHidden;
     BOOL _wasWantsFullScreenLayout;
@@ -25,7 +25,7 @@
 
 - (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate
 {
-    return [self initWithDelegate:delegate cameraSettingsBlock:nil];
+    return [[DBCameraContainerViewController alloc] initWithDelegate:delegate cameraSettingsBlock:nil];
 }
 
 - (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraSettingsBlock:(CameraSettingsBlock)block
@@ -48,6 +48,14 @@
     [self.view addSubview:self.defaultCameraViewController.view];
     if ( _settingsBlock )
         _settingsBlock(self.cameraViewController.cameraView, self);
+    
+    
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES];
+    self.tabBarController.tabBar.hidden = YES;
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -118,5 +126,6 @@
     [_cameraViewController setContainerDelegate:self];
     _defaultCameraViewController = nil;
 }
+
 
 @end

@@ -13,7 +13,7 @@
 
 #import <AssetsLibrary/AssetsLibrary.h>
 
-#define previewFrame (CGRect){ 0, 65, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height - 138 }
+#define previewFrame (CGRect){ 0, 65, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.width }
 
 // pinch
 #define MAX_PINCH_SCALE_NUM   3.f
@@ -88,12 +88,12 @@
     [self addSubview:self.topContainerBar];
     [self addSubview:self.bottomContainerBar];
 
-    [self.topContainerBar addSubview:self.cameraButton];
+    [self.bottomContainerBar addSubview:self.cameraButton];
     [self.topContainerBar addSubview:self.flashButton];
     [self.topContainerBar addSubview:self.gridButton];
 
     [self.bottomContainerBar addSubview:self.triggerButton];
-    [self.bottomContainerBar addSubview:self.closeButton];
+    [self.topContainerBar addSubview:self.closeButton];
     [self.bottomContainerBar addSubview:self.photoLibraryButton];
 
     [self createGesture];
@@ -159,7 +159,7 @@
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton setBackgroundColor:[UIColor clearColor]];
         [_closeButton setImage:[[UIImage imageNamed:@"close"] tintImageWithColor:self.tintColor] forState:UIControlStateNormal];
-        [_closeButton setFrame:(CGRect){ 25,  CGRectGetMidY(self.bottomContainerBar.bounds) - 15, 30, 30 }];
+        [_closeButton setFrame:(CGRect){ 25,  CGRectGetMidY(self.topContainerBar.bounds) - 15, 30, 30 }];
         [_closeButton addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
     }
 
@@ -173,7 +173,7 @@
         [_cameraButton setBackgroundColor:[UIColor clearColor]];
         [_cameraButton setImage:[[UIImage imageNamed:@"flip"] tintImageWithColor:self.tintColor] forState:UIControlStateNormal];
         [_cameraButton setImage:[[UIImage imageNamed:@"flip"] tintImageWithColor:self.selectedTintColor] forState:UIControlStateSelected];
-        [_cameraButton setFrame:(CGRect){ 25, 17.5f, 30, 30 }];
+        [_cameraButton setFrame:(CGRect){ 25, CGRectGetMidY(self.bottomContainerBar.bounds) - 15, 30, 30 }];
         [_cameraButton addTarget:self action:@selector(changeCamera:) forControlEvents:UIControlEventTouchUpInside];
     }
 
